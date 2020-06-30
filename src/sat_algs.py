@@ -1,21 +1,18 @@
 import itertools
-from typing import Optional, List
 import random
-
-from src.utils import bitstrings
+from typing import List, Optional
+from src.const import Assignment, PartialAssignment, TotalAssignment
 
 from src.cnf import (
     CNF,
-    evaluate,
-    Assignment,
-    bitstrings,
     assign,
-    simplify,
     assign_single_variable,
+    bitstrings,
+    evaluate,
     evaluate_on_assignment,
-    TotalAssignment,
-    PartialAssignment,
+    simplify,
 )
+from src.utils import bitstrings
 
 
 def brute_force(phi: CNF) -> Optional[TotalAssignment]:
@@ -37,7 +34,7 @@ def all_solutions(phi: CNF) -> List[TotalAssignment]:
 
 def ppz_once(phi: CNF) -> Optional[TotalAssignment]:
     n = phi.n_vars
-    assignment : PartialAssignment = [None for _ in range(n)]
+    assignment: PartialAssignment = [None for _ in range(n)]
     for var in range(1, n + 1):
         if assignment[var - 1] is not None:  # Already been assigned
             continue
@@ -57,7 +54,9 @@ def ppz_once(phi: CNF) -> Optional[TotalAssignment]:
         if [] in phi.clauses:
             return None
 
-    return [x for x in assignment if x is not None] # Type checking purposes, they should all be non none
+    return [
+        x for x in assignment if x is not None
+    ]  # Type checking purposes, they should all be non none
 
 
 def ppz(phi: CNF, iterations: int) -> Optional[TotalAssignment]:

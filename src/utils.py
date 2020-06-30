@@ -1,17 +1,22 @@
+import itertools
 import logging
 import sys
+from typing import Iterable, List
+
 from src.const import LOG_FILE, LOG_FORMATTER
-from typing import List, Iterable
-import itertools
+
 
 def bitstrings(n: int) -> Iterable[List[bool]]:
     return (list(x) for x in itertools.product([True, False], repeat=n))
 
-def xor(x:List[bool], y:List[bool]) -> List[bool]:
+
+def xor(x: List[bool], y: List[bool]) -> List[bool]:
     return [a ^ b for (a, b) in zip(x, y)]
+
 
 def list_of_bool_to_binary_string(list: List[bool]) -> str:
     return "".join((str(int(x)) for x in list))
+
 
 def get_console_handler():
     console_handler = logging.StreamHandler(sys.stdout)

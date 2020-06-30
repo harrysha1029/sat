@@ -1,8 +1,10 @@
+from typing import List, Union
+
 from src.cnf import *
+from src.draw import *
+from src.random_sat import *
 from src.sat_algs import *
 from src.utils import list_of_bool_to_binary_string
-from src.draw import *
-from typing import List, Union
 
 phi = dist_R(5, 3, 10)
 solns = all_solutions(phi)

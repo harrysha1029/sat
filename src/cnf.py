@@ -1,34 +1,38 @@
-from abc import ABC, abstractmethod
-from typing import Callable, Dict, Iterable, List, Optional, Set, Union, Sequence
-import itertools
-import random
 from statistics import mean
+from typing import List, Optional
+
+from src.const import Assignment, Clause
 from src.utils import bitstrings
 
-Literal = Union[int, bool]
-Clause = List[Literal]
-TotalAssignment = List[bool]
-PartialAssignment = List[Optional[bool]]
-Assignment = Union[TotalAssignment, PartialAssignment]
 # Assignments is a list of truth assignments where the ith index contains the i+1s variables truth assignment
 
 
 class CNF:
-    def __init__(self, clauses: List[Clause] = []):
-        self.clauses = clauses
+    def __init__(self, clauses: Optional[List[Clause]] = None):
+        if clauses is None:
+            self.clauses = []
+        else: 
+            self.clauses = clauses
 
     def __repr__(self):
-        return  "\n".join(map(lambda c: " ∨ ".join(map(lambda l: f"¬x{abs(l)}" if l < 0 else f"x{abs(l)}", c)), self.clauses))
+        return "\n".join(
+            map(
+                lambda c: " ∨ ".join(
+                    map(lambda l: f"¬x{abs(l)}" if l < 0 else f"x{abs(l)}", c)
+                ),
+                self.clauses,
+            )
+        )
 
     def sorted(self):
         clauses = sorted([sorted(c) for c in self.clauses])
         return CNF(clauses)
 
     def __eq__(self, other):
-        self.sorted().clauses == other.sorted().clauses
+        return self.sorted().clauses == other.sorted().clauses
 
     def __hash__(self):
-        hash(self.sorted().clauses.__repr__())
+        return hash(self.sorted().clauses.__repr__())
 
     @property
     def variables(self):
@@ -57,8 +61,6 @@ def print_formula_with_assignment(phi: CNF, x: Assignment) -> None:
     print(phi)
     print_assignment(x)
     print(assign_and_simplify(phi, x))
-
-
 
 
 def sensitivity(phi: CNF, x: List[bool]) -> int:
@@ -130,36 +132,6 @@ def evaluate(phi: CNF) -> Optional[bool]:
 
 def evaluate_on_assignment(phi: CNF, x: Assignment) -> Optional[bool]:
     return evaluate(assign(phi, x))
-
-
-def sample(
-    num_sample, dist: Callable[[int, int, int], CNF], n: int, k: int, m: int
-) -> List[CNF]:
-    return [dist(n, k, m) for _ in range(num_sample)]
-
-
-def sample_clause(n: int, k: int) -> Clause:
-    return [random.randint(1, n) * random.choice([1, -1]) for _ in range(k)]
-
-
-def dist_R(n: int, k: int, m: int) -> CNF:
-    clauses = [sample_clause(n, k) for _ in range(m)]
-    return CNF(clauses)
-
-
-def dist_R_plus(n: int, k: int, m: int) -> CNF:
-    # TODO
-    pass
-
-
-def dist_P(n: int, k: int, m: int) -> CNF:
-    # TODO
-    pass
-
-
-def dist_P_sigma(n: int, k: int, m: int, sigma: Assignment) -> CNF:
-    # TODO
-    pass
 
 
 if __name__ == "__main__":
