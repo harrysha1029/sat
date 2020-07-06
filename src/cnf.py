@@ -133,6 +133,16 @@ def evaluate(phi: CNF) -> Optional[bool]:
 def evaluate_on_assignment(phi: CNF, x: Assignment) -> Optional[bool]:
     return evaluate(assign(phi, x))
 
+def impose_blanks(phi: CNF, blanks: List[int]) -> CNF:
+    clauses = []
+    for c in phi.clauses:
+        new_c = []
+        for l in c:
+            if abs(l) not in blanks:
+                new_c.append(l)
+        clauses.append(new_c)
+    return CNF(clauses)
+
 
 if __name__ == "__main__":
     pass
