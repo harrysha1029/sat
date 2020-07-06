@@ -1,5 +1,6 @@
 import itertools
 
+from src.cnf import impose_blanks
 from src.random_sat import sample
 from src.sat_algs import all_solutions
 
