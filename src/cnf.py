@@ -3,9 +3,13 @@ from statistics import mean
 from typing import List, Optional
 
 from src.const import Assignment, Clause, PartialAssignment, TotalAssignment
-from src.utils import bitstrings
+from src.utils import all_partial_assignments, bitstrings
 
 # Assignments is a list of truth assignments where the ith index contains the i+1s variables truth assignment
+
+
+def lit_to_var(x):
+    return abs(x)
 
 
 class CNF:
@@ -19,7 +23,12 @@ class CNF:
         return "\n".join(
             map(
                 lambda c: " ∨ ".join(
-                    map(lambda l: f"¬x{abs(l)}" if l < 0 else f"x{abs(l)}", c)
+                    map(
+                        lambda l: f"¬x{lit_to_var(l)}"
+                        if l < 0
+                        else f"x{lit_to_var(l)}",
+                        c,
+                    )
                 ),
                 self.clauses,
             )
@@ -37,7 +46,9 @@ class CNF:
 
     @property
     def variables(self):
-        return set([abs(literal) for clause in self.clauses for literal in clause])
+        return set(
+            [lit_to_var(literal) for clause in self.clauses for literal in clause]
+        )
 
     @property
     def n_vars(self):
@@ -107,7 +118,7 @@ def assign_single_variable(phi: CNF, var: int, val: bool) -> CNF:
 def assign_clause_single_variable(clause: Clause, var: int, val: bool) -> Clause:
     new_clause: Clause = []
     for lit in clause:
-        if abs(lit) == var:
+        if lit_to_var(lit) == var:
             new_clause.append(val == (lit > 0))
             continue
         new_clause.append(lit)
@@ -139,12 +150,13 @@ def evaluate(phi: CNF) -> Optional[bool]:
 def evaluate_on_assignment(phi: CNF, x: Assignment) -> Optional[bool]:
     return evaluate(assign(phi, x))
 
+
 def impose_blanks(phi: CNF, blanks: List[int]) -> CNF:
     clauses = []
     for c in phi.clauses:
         new_c = []
         for l in c:
-            if abs(l) not in blanks:
+            if lit_to_var(l) not in blanks:
                 new_c.append(l)
         clauses.append(new_c)
     return CNF(clauses)
@@ -153,8 +165,9 @@ def impose_blanks(phi: CNF, blanks: List[int]) -> CNF:
 def is_total_assignment(x: Assignment) -> bool:
     return not (None in x)
 
+
 def num_free(x: Assignment) -> int:
-    return x.count(None) # type: ignore
+    return x.count(None)  # type: ignore
 
 
 def assign_first_free(x: PartialAssignment, val: bool) -> Assignment:
@@ -164,7 +177,7 @@ def assign_first_free(x: PartialAssignment, val: bool) -> Assignment:
     return new_assignment
 
 
-def completions(x: Assignment, m:int=0) -> List[TotalAssignment]:
+def completions(x: Assignment, m: int = 0) -> List[TotalAssignment]:
     if num_free(x) == m:
         return [x]  # type: ignore
     assign1 = assign_first_free(x, True)  # type: ignore
@@ -183,6 +196,24 @@ def maximally_sensitive(phi: CNF, x: Assignment) -> bool:
             if not any(sensitive_at(phi, sig, _var + 1) for sig in completion):
                 return False
     return True
+
+def get_all_partial_sols(phi, num_free):
+    partial_assignments = all_partial_assignments(phi.n_vars, num_free)
+    partial_sols = []
+    for x in partial_assignments:
+        completion = completions(x)
+        if all(evaluate_on_assignment(phi, c) for c in completion):
+            partial_sols.append(x)
+    return partial_sols
+
+def get_maximally_sensitive_assignments(phi, num_free):
+    partial_assignments = all_partial_assignments(phi.n_vars, num_free)
+    return [x for x in partial_assignments if maximally_sensitive(phi, x)]
+
+
+def get_maximally_sensitive_solutions(phi, num_free):
+    sols = get_all_partial_sols(phi, num_free)
+    return [x for x in sols if maximally_sensitive(phi, x)]
 
 
 if __name__ == "__main__":

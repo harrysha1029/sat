@@ -2,7 +2,6 @@ import itertools
 from typing import Iterable
 
 import networkx as nx
-
 from src.const import Assignment, TotalAssignment
 from src.utils import bitstrings, list_of_bool_to_binary_string, xor
 

@@ -10,9 +10,19 @@ def random_permutation(n: int) -> Permutation:
     return sig
 
 
-def ppz_encode(phi: CNF, TotalAssignment, sig: Permutation) -> TotalAssignment:
+def ppz_encode(phi: CNF, x: TotalAssignment, sig: Permutation) -> TotalAssignment:
     pass
 
 
 def ppz_decode(encoding: TotalAssignment, sig: Permutation) -> TotalAssignment:
+    pass
+
+
+def ppz_parallel_encode(
+    phi: CNF, x: TotalAssignment, sig: Permutation
+) -> TotalAssignment:
+    pass
+
+
+def ppz_parallel_decode(encoding: TotalAssignment, sig: Permutation) -> TotalAssignment:
     pass

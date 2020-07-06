@@ -34,7 +34,7 @@ def ppz_once(phi: CNF) -> Optional[TotalAssignment]:
         val = None
 
         for clause in phi.clauses:
-            if len(clause) == 1 and abs(clause[0]) == var:  # Forced
+            if len(clause) == 1 and lit_to_var(clause[0]) == var:  # Forced
                 val = clause[0] < 1
                 break
 

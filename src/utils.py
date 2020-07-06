@@ -10,23 +10,26 @@ def bitstrings(n: int) -> Iterable[TotalAssignment]:
     return set_exponent([True, False], n)
 
 
-def all_partial_assignments(n: int, m: int) -> Iterable[PartialAssignment]:
-    def all_partial_assignments_helper(n, m, running):
+def all_partial_assignments(n: int, m: int) -> List[PartialAssignment]:
+    assignment_list = []
+
+    def all_partial_assignments_helper(n: int, m: int, running):
         if n == 0:
-            yield running
+            assignment_list.append(running)
+            return
         at = running.copy() + [True]
         af = running.copy() + [False]
         if m > 0:
             an = running.copy() + [None]
-            x= all_partial_assignments_helper(n - 1, m, at)
-            # return all_partial_assignments_helper(n - 1, m, af)
-            # return all_partial_assignments_helper(n - 1, m - 1, an)
+            all_partial_assignments_helper(n - 1, m, at)
+            all_partial_assignments_helper(n - 1, m, af)
+            all_partial_assignments_helper(n - 1, m - 1, an)
         else:
-            all_partial_assignments_helper(n - 1, m, at
-            )
+            all_partial_assignments_helper(n - 1, m, at)
             all_partial_assignments_helper(n - 1, m, af)
 
-    return all_partial_assignments_helper(n, m, [])
+    all_partial_assignments_helper(n, m, [])
+    return assignment_list
 
 
 def set_exponent(s: Iterable, n: int) -> Iterable[TotalAssignment]:
