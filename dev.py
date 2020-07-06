@@ -4,11 +4,19 @@ from src.cnf import *
 from src.draw import *
 from src.random_sat import *
 from src.sat_algs import *
-from src.utils import list_of_bool_to_binary_string
+from src.utils import *
 
-phi = dist_R(5, 3, 10)
+phi = dist_R(6, 3, 5)
 solns = all_solutions(phi)
 draw_assignments(solns, phi)
+
+ap = all_partial_assignments(5, 2)
+print(ap)
+for hi in ap:
+    print(hi)
+
+# draw_parity(5)
+
 # assignment = ppz(phi, 1000)
 
 # if assignment:

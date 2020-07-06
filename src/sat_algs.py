@@ -1,17 +1,9 @@
 import itertools
 import random
 from typing import List, Optional
-from src.const import Assignment, PartialAssignment, TotalAssignment
 
-from src.cnf import (
-    CNF,
-    assign,
-    assign_single_variable,
-    bitstrings,
-    evaluate,
-    evaluate_on_assignment,
-    simplify,
-)
+from src.cnf import CNF, assign_single_variable, evaluate_on_assignment, simplify
+from src.const import PartialAssignment, TotalAssignment
 from src.utils import bitstrings
 
 
@@ -54,9 +46,7 @@ def ppz_once(phi: CNF) -> Optional[TotalAssignment]:
         if [] in phi.clauses:
             return None
 
-    return [
-        x for x in assignment if x is not None
-    ]  # Type checking purposes, they should all be non none
+    return assignment  # type: ignore
 
 
 def ppz(phi: CNF, iterations: int) -> Optional[TotalAssignment]:

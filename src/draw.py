@@ -1,7 +1,9 @@
 import itertools
+from typing import Iterable
 
 import networkx as nx
 
+from src.const import Assignment, TotalAssignment
 from src.utils import bitstrings, list_of_bool_to_binary_string, xor
 
 
@@ -18,8 +20,9 @@ def draw_graph(graph: nx.Graph, fname: str = "diagram.svg", **kwargs):
     agraph.draw(fname, **kwargs)
 
 
-def draw_assignments(assignments, phi=None):
+def draw_assignments(assignments: Iterable[TotalAssignment], phi=None):
     G = nx.DiGraph(label=str(phi))
+    G.add_nodes_from([list_of_bool_to_binary_string(x) for x in assignments])
     for x, y in itertools.combinations(assignments, 2):
         if sum(x) > sum(y):
             x, y = y, x
@@ -28,11 +31,16 @@ def draw_assignments(assignments, phi=None):
             G.add_edge(
                 list_of_bool_to_binary_string(x),
                 list_of_bool_to_binary_string(y),
-                label=str(diff.index(1) + 1),
+                label=str(diff.index(True) + 1),
             )
     draw_graph(G)
 
 
-def draw_2n(n):
+def draw_2n(n: int):
     strings = bitstrings(n)
+    draw_assignments(strings)
+
+
+def draw_parity(n: int):
+    strings = [x for x in bitstrings(n) if (sum(x) % 2) == 1]
     draw_assignments(strings)

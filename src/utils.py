@@ -3,18 +3,41 @@ import logging
 import sys
 from typing import Iterable, List
 
-from src.const import LOG_FILE, LOG_FORMATTER
+from src.const import LOG_FILE, LOG_FORMATTER, PartialAssignment, TotalAssignment
 
 
-def bitstrings(n: int) -> Iterable[List[bool]]:
-    return (list(x) for x in itertools.product([True, False], repeat=n))
+def bitstrings(n: int) -> Iterable[TotalAssignment]:
+    return set_exponent([True, False], n)
 
 
-def xor(x: List[bool], y: List[bool]) -> List[bool]:
+def all_partial_assignments(n: int, m: int) -> Iterable[PartialAssignment]:
+    def all_partial_assignments_helper(n, m, running):
+        if n == 0:
+            yield running
+        at = running.copy() + [True]
+        af = running.copy() + [False]
+        if m > 0:
+            an = running.copy() + [None]
+            x= all_partial_assignments_helper(n - 1, m, at)
+            # return all_partial_assignments_helper(n - 1, m, af)
+            # return all_partial_assignments_helper(n - 1, m - 1, an)
+        else:
+            all_partial_assignments_helper(n - 1, m, at
+            )
+            all_partial_assignments_helper(n - 1, m, af)
+
+    return all_partial_assignments_helper(n, m, [])
+
+
+def set_exponent(s: Iterable, n: int) -> Iterable[TotalAssignment]:
+    return (list(x) for x in itertools.product(s, repeat=n))
+
+
+def xor(x: TotalAssignment, y: TotalAssignment) -> TotalAssignment:
     return [a ^ b for (a, b) in zip(x, y)]
 
 
-def list_of_bool_to_binary_string(list: List[bool]) -> str:
+def list_of_bool_to_binary_string(list: TotalAssignment) -> str:
     return "".join((str(int(x)) for x in list))
 
 
