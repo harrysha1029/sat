@@ -2,15 +2,15 @@ import itertools
 import random
 from typing import List, Optional
 
-from src.cnf import CNF, assign_single_variable, evaluate_on_assignment, simplify
+from src.normal_form import CNF
 from src.const import PartialAssignment, TotalAssignment
-from src.utils import bitstrings
+from src.utils import bitstrings, lit_to_var
 
 
 def brute_force(phi: CNF) -> Optional[TotalAssignment]:
     for _sig in bitstrings(len(phi.variables)):
         sig = list(_sig)
-        if evaluate_on_assignment(phi, sig):
+        if phi.evaluate_on_assignment(sig):
             return sig
     return None
 
@@ -19,7 +19,7 @@ def all_solutions(phi: CNF) -> List[TotalAssignment]:
     sols = []
     for _sig in bitstrings(len(phi.variables)):
         sig = list(_sig)
-        if evaluate_on_assignment(phi, sig):
+        if phi.evaluate_on_assignment(sig):
             sols.append(sig)
     return sols
 
@@ -42,7 +42,7 @@ def ppz_once(phi: CNF) -> Optional[TotalAssignment]:
             val = random.choice([True, False])
 
         assignment[var - 1] = val
-        phi = simplify(assign_single_variable(phi, var, val))
+        phi = phi.assign_single_variable(var, val).simplify()
         if [] in phi.clauses:
             return None
 

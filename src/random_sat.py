@@ -1,7 +1,7 @@
 import random
 from typing import Callable, List
 
-from src.cnf import CNF
+from src.normal_form import CNF, all_cnfs, all_dnfs
 from src.const import Assignment, Clause
 
 

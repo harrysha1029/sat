@@ -19,8 +19,9 @@ def draw_graph(graph: nx.Graph, fname: str = "diagram.svg", **kwargs):
     agraph.draw(fname, **kwargs)
 
 
-def draw_assignments(assignments: Iterable[TotalAssignment], phi=None):
-    G = nx.DiGraph(label=str(phi))
+def draw_assignments(assignments: Iterable[TotalAssignment], phi=None,extra_text='', **kwargs):
+    
+    G = nx.DiGraph(label=str(phi) + '\n' + extra_text)
     G.add_nodes_from([list_of_bool_to_binary_string(x) for x in assignments])
     for x, y in itertools.combinations(assignments, 2):
         if sum(x) > sum(y):
@@ -32,7 +33,7 @@ def draw_assignments(assignments: Iterable[TotalAssignment], phi=None):
                 list_of_bool_to_binary_string(y),
                 label=str(diff.index(True) + 1),
             )
-    draw_graph(G)
+    draw_graph(G, **kwargs)
 
 
 def draw_2n(n: int):

@@ -5,6 +5,9 @@ from typing import Iterable, List
 
 from src.const import LOG_FILE, LOG_FORMATTER, PartialAssignment, TotalAssignment
 
+def lit_to_var(x):
+    return abs(x)
+
 
 def bitstrings(n: int) -> Iterable[TotalAssignment]:
     return set_exponent([True, False], n)
