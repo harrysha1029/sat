@@ -18,7 +18,8 @@ def all_partial_assignments(n: int, m: int) -> List[PartialAssignment]:
 
     def all_partial_assignments_helper(n: int, m: int, running):
         if n == 0:
-            assignment_list.append(running)
+            if m == 0:
+                assignment_list.append(running)
             return
         at = running.copy() + [True]
         af = running.copy() + [False]

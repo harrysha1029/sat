@@ -2,22 +2,22 @@ import itertools
 import random
 from typing import List, Optional
 
-from src.normal_form import CNF
+from src.normal_form import CNF, NormalForm
 from src.const import PartialAssignment, TotalAssignment
 from src.utils import bitstrings, lit_to_var
 
 
-def brute_force(phi: CNF) -> Optional[TotalAssignment]:
-    for _sig in bitstrings(len(phi.variables)):
+def brute_force(phi: NormalForm) -> Optional[TotalAssignment]:
+    for _sig in bitstrings(phi.n_vars):
         sig = list(_sig)
         if phi.evaluate_on_assignment(sig):
             return sig
     return None
 
 
-def all_solutions(phi: CNF) -> List[TotalAssignment]:
+def all_solutions(phi: NormalForm) -> List[TotalAssignment]:
     sols = []
-    for _sig in bitstrings(len(phi.variables)):
+    for _sig in bitstrings(phi.n_vars):
         sig = list(_sig)
         if phi.evaluate_on_assignment(sig):
             sols.append(sig)

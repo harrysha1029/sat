@@ -60,6 +60,7 @@ def completions(x: Assignment, m: int = 0) -> List[TotalAssignment]:
         return [x]  # type: ignore
     assign1 = assign_first_free(x, True)  # type: ignore
     assign0 = assign_first_free(x, False)  # type: ignore
+
     return completions(assign0) + completions(assign1)
 
 

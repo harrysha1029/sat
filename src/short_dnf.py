@@ -3,12 +3,20 @@ import math
 
 from src.assignment import get_maximally_sensitive_solutions
 from src.normal_form import CNF, all_cnfs
-from src.draw import draw_assignments
+from src.draw import draw_as_subset
 from src.random_sat import dist_R, sample
 from src.sat_algs import all_solutions
 from tqdm import tqdm
 import os
 import ast
+import pandas as pd
+
+def load_stats(fname) -> pd.DataFrame:
+    cols = ['n', 'm', 'k', 'n_max_sens']
+    df= pd.read_csv("cnfs_n5_k3_m4_nfree2.csv", header=None, index_col=0)
+    df.columns = cols
+    return df
+
 
 def num_nfs(n, k, m):
     return math.comb(math.comb(n, k)*2**k, m)
@@ -16,9 +24,7 @@ def num_nfs(n, k, m):
 def read_index(fname, index):
     with open(fname, 'r') as f:
         for i, l in enumerate(f):
-            print(i, l)
             if i == index:
-                print(l)
                 return l
 
 def get_ith_cnf(index, n, k, m):
@@ -32,6 +38,11 @@ def get_ith_cnf(index, n, k, m):
             if i == index:
                 return phi
 
+def draw_index(ind, n, k, m):
+    phi = get_ith_cnf(ind, n, k, m)
+    sols = all_solutions(phi)
+    draw_as_subset(sols,n, phi)
+
 def cnfs_file(n, k, m):
     fname = f'cnfs_list_n{n}_k{k}_m{m}.txt'
     for phi in tqdm(all_cnfs(n, k, m), total=num_nfs(n,k,m)):
@@ -39,7 +50,6 @@ def cnfs_file(n, k, m):
             f.write(str(list(phi.clauses)))
             f.write('\n')
 
-COLS = ['index', 'n', 'm', 'k', 'n_max_sens']
 def generate_short_dnf_stats(n, k, m, nfree):
     fname = f'cnfs_n{n}_k{k}_m{m}_nfree{nfree}.csv'
     for i, phi in tqdm(enumerate(all_cnfs(n, k, m)), total=num_nfs(n,k,m)):
@@ -49,8 +59,48 @@ def generate_short_dnf_stats(n, k, m, nfree):
             f.write(", ".join(map(str, [i, n, k, m, num_max_sens])))
             f.write('\n')
 
-def get_bound(n, k):
-    return 2 ** (n-n/k)
+def compare_num_free_bits_stats(n, k, num_sample=100):
+    fname = f'samples.csv'
+    samples = sample(num_sample, dist_R, n, k)
+    with open(fname, 'a') as f:
+        for phi in tqdm(samples, total=num_sample):
+            m = len(phi.clauses)
+            sols = all_solutions(phi)
+            for j in range(0,n):
+                max_sens = get_maximally_sensitive_solutions(phi, j)
+                num_max_sens = len(max_sens)
+                f.write(", ".join(map(str, [phi.clauses, n, k, m, j, num_max_sens])))
+                f.write('\n')
+
+def last_index(l, o):
+    return len(l) - l[::-1].index(o) - 1
+
+def parse_phi_csv(fname):
+    with open(fname, 'r') as f:
+        rows = []
+        for l in f.readlines():
+            l = l.strip()
+            split_ind = last_index(l, ']')  + 1
+            rows.append([l[:split_ind]] + l[split_ind+1:].split(','))
+    return pd.DataFrame(rows)
+
+def load_n_free_stats(fname):
+    df = parse_phi_csv(fname)
+    cols = ['clauses', 'n', 'k', 'm', 'j', 'num_max_sens']
+    df.columns = cols
+    types = {
+        'clauses':str
+        , 'n':int
+        , 'k':int
+        , 'm':int
+        , 'j':int
+        , 'num_max_sens':int
+    }
+    df.columns = ['clauses', 'n', 'k', 'm', 'j', 'num_max_sens']
+    return df.astype(types)
+
+def get_bound(n, k, j):
+    return 2 ** (n-(n-j)/k-j)
 
 def short_dnf():
     # num variables, clause width, num clauses

@@ -99,8 +99,11 @@ class NormalForm:
         else:
             return self.__class__(new_clauses)
 
-    def simplify(self):
+    def simplify(self, in_place=False):
         raise NotImplementedError
+
+    def simplify_inplace(self):
+        return self.simplify(True)
 
     def evaluate(self) -> Optional[bool]:
         raise NotImplementedError
@@ -129,17 +132,21 @@ class CNF(NormalForm):
                 self.clauses,
             )
         )
-    def simplify(self):
+    def simplify(self, in_place=False):
         clauses = []
         for c in self.clauses:
             if True in c:
                 continue
             new_c = []
             for l in c:
-                if l != False :
+                if l != False and l not in new_c:
                     new_c.append(l)
             clauses.append(new_c)
-        return CNF(clauses)
+        if in_place:
+            self.clauses = clauses
+            return self
+        else:
+            return CNF(clauses)
 
     def evaluate(self) -> Optional[bool]:
         simplified = self.simplify()
@@ -164,22 +171,6 @@ class DNF(NormalForm):
                 self.clauses,
             )
         )
-
-    def assign_single_variable(self, var: int, val: bool):
-        def assign_clause_single_variable(clause, var, val):
-            new_clause: Clause = []
-            for lit in clause:
-                if lit_to_var(lit) == var:
-                    new_clause.append(val == (lit > 0))
-                    continue
-                new_clause.append(lit)
-            return new_clause
-
-        new_clauses = []
-        for c in self.clauses:
-            new_c = assign_clause_single_variable(c, var, val)
-            new_clauses.append(new_c)
-        return CNF(new_clauses)
 
     def simplify(self):
         clauses = []
