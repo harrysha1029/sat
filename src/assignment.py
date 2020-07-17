@@ -1,17 +1,20 @@
 import copy
 from statistics import mean
 from typing import List, Optional
+import itertools
 
 from src.const import Assignment, Clause, PartialAssignment, TotalAssignment
-from src.utils import all_partial_assignments, bitstrings
 from src.normal_form import CNF
+from src.utils import all_partial_assignments, bitstrings
 
 # Assignments is a list of truth assignments where the ith index contains the i+1s variables truth assignment
+
 
 def print_assignment(x: Assignment) -> None:
     for i, a in enumerate(x):
         print(f"{i+1}:{a}", end=", ")
     print()
+
 
 def print_formula_with_assignment(phi: CNF, x: Assignment) -> None:
     print(phi)
@@ -37,8 +40,10 @@ def sensitivity(phi: CNF, x: TotalAssignment) -> int:
         for i in range(1, n + 1)
     )
 
+
 def avg_sensitivity(phi: CNF) -> float:
     return mean(sensitivity(phi, x) for x in bitstrings(phi.n_vars))
+
 
 def is_total_assignment(x: Assignment) -> bool:
     return not (None in x)
@@ -67,6 +72,7 @@ def completions(x: Assignment, m: int = 0) -> List[TotalAssignment]:
 def satisfying_completions(phi: CNF, x: PartialAssignment) -> List[TotalAssignment]:
     return [c for c in completions(x) if phi.evaluate_on_assignment(c)]
 
+
 def maximally_sensitive(phi: CNF, x: Assignment) -> bool:
     completion = completions(x)
     for _var, bit in enumerate(x):
@@ -74,6 +80,7 @@ def maximally_sensitive(phi: CNF, x: Assignment) -> bool:
             if not any(sensitive_at(phi, sig, _var + 1) for sig in completion):
                 return False
     return True
+
 
 def get_all_partial_sols(phi, num_free):
     partial_assignments = all_partial_assignments(phi.n_vars, num_free)
@@ -84,6 +91,7 @@ def get_all_partial_sols(phi, num_free):
             partial_sols.append(x)
     return partial_sols
 
+
 def get_maximally_sensitive_assignments(phi, num_free):
     partial_assignments = all_partial_assignments(phi.n_vars, num_free)
     return [x for x in partial_assignments if maximally_sensitive(phi, x)]
@@ -92,6 +100,19 @@ def get_maximally_sensitive_assignments(phi, num_free):
 def get_maximally_sensitive_solutions(phi, num_free):
     sols = get_all_partial_sols(phi, num_free)
     return [x for x in sols if maximally_sensitive(phi, x)]
+
+def consistent(x:Assignment, y:Assignment):
+    assert len(x) == len(y)
+    for a, b in zip(x, y):
+        if a is not None and b is not None and a != b:
+            return False
+    return True
+
+def pairwize_consistent(l):
+    for x,y in itertools.combinations(l, 2):
+        if not consistent(x, y): return False
+    return True
+
 
 
 if __name__ == "__main__":

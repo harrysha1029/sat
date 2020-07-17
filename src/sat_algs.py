@@ -2,8 +2,8 @@ import itertools
 import random
 from typing import List, Optional
 
-from src.normal_form import CNF, NormalForm
 from src.const import PartialAssignment, TotalAssignment
+from src.normal_form import CNF, NormalForm
 from src.utils import bitstrings, lit_to_var
 
 

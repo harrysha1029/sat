@@ -1,16 +1,17 @@
 import random
-from typing import Callable, List, Iterable
+from typing import Callable, Iterable, List
 
-from src.normal_form import CNF, all_cnfs, all_dnfs
 from src.const import Assignment, Clause
+from src.normal_form import CNF, all_cnfs, all_dnfs
 
 
 def sample(
     num_sample, dist: Callable[[int, int, int], CNF], n: int, k: int
 ) -> Iterable[CNF]:
     for _ in range(num_sample):
-        m = random.randrange(1, n+1)
+        m = random.randrange(1, n + 1)
         yield dist(n, k, m)
+
 
 def sample_fix_num_clauses(
     num_sample, dist: Callable[[int, int, int], CNF], n: int, k: int, m: int

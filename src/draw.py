@@ -2,10 +2,11 @@ import itertools
 from typing import Iterable
 
 import networkx as nx
+
 from src.const import Assignment, TotalAssignment
-from src.utils import bitstrings, list_of_bool_to_binary_string, xor
-from src.sat_algs import all_solutions
 from src.normal_form import NormalForm
+from src.sat_algs import all_solutions
+from src.utils import bitstrings, list_of_bool_to_binary_string, xor
 
 
 def draw_graph(graph: nx.Graph, fname: str = "diagram.svg", **kwargs):
@@ -21,8 +22,10 @@ def draw_graph(graph: nx.Graph, fname: str = "diagram.svg", **kwargs):
     agraph.draw(fname, **kwargs)
 
 
-def draw_assignments(assignments: Iterable[TotalAssignment], phi=None,extra_text='', **kwargs):
-    G = nx.DiGraph(label=str(phi) + '\n' + extra_text)
+def draw_assignments(
+    assignments: Iterable[TotalAssignment], phi=None, extra_text="", **kwargs
+):
+    G = nx.DiGraph(label=str(phi) + "\n" + extra_text)
     G.add_nodes_from([list_of_bool_to_binary_string(x) for x in assignments])
     for x, y in itertools.combinations(assignments, 2):
         if sum(x) > sum(y):
@@ -36,13 +39,17 @@ def draw_assignments(assignments: Iterable[TotalAssignment], phi=None,extra_text
             )
     draw_graph(G, **kwargs)
 
+
 def draw_solutions(phi: NormalForm, **kwargs):
     sols = all_solutions(phi)
     draw_assignments(sols, phi, **kwargs)
 
-def draw_as_subset(assignments: Iterable[TotalAssignment],n:int, phi=None,extra_text='', **kwargs):
-    
-    G = nx.DiGraph(label=str(phi) + '\n' + extra_text)
+
+def draw_as_subset(
+    assignments: Iterable[TotalAssignment], n: int, phi=None, extra_text="", **kwargs
+):
+
+    G = nx.DiGraph(label=str(phi) + "\n" + extra_text)
     G.add_nodes_from([list_of_bool_to_binary_string(x) for x in bitstrings(n)])
     for x, y in itertools.combinations(bitstrings(n), 2):
         if sum(x) > sum(y):
@@ -55,7 +62,7 @@ def draw_as_subset(assignments: Iterable[TotalAssignment],n:int, phi=None,extra_
                 label=str(diff.index(True) + 1),
             )
     for x in assignments:
-        G.nodes[list_of_bool_to_binary_string(x)]['color'] = 'green'
+        G.nodes[list_of_bool_to_binary_string(x)]["color"] = "green"
     draw_graph(G, **kwargs)
 
 

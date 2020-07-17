@@ -1,12 +1,13 @@
 import copy
+import itertools
 from statistics import mean
 from typing import List, Optional
-import itertools
 
-from src.const import Assignment, PartialAssignment, TotalAssignment, Clause
+from src.const import Assignment, Clause, PartialAssignment, TotalAssignment
 from src.utils import all_partial_assignments, bitstrings, lit_to_var
 
 # Assignments is a list of truth assignments where the ith index contains the i+1s variables truth assignment
+
 
 class NormalForm:
     def __init__(self, clauses: Optional[List[Clause]] = None):
@@ -63,21 +64,20 @@ class NormalForm:
         return self
 
     def permute(self, _sig, in_place=False):
-        mapping = {i+1:s+1 for i, s in enumerate(_sig)}
+        mapping = {i + 1: s + 1 for i, s in enumerate(_sig)}
         new_clauses = []
         for c in self.clauses:
             clause = []
             for l in c:
                 sign = -1 if sign < 0 else 1
                 new_var = mapping[abs(l)]
-                clause.append(sign*new_var)
+                clause.append(sign * new_var)
             new_clauses.append(clause)
         if in_place:
             self.clauses = new_clauses
             return
         else:
             return self.__class__(new_clauses)
-
 
     def assign_single_variable(self, var: int, val: bool, in_place=False):
         def assign_clause_single_variable(clause, var, val):
@@ -108,18 +108,23 @@ class NormalForm:
     def evaluate(self) -> Optional[bool]:
         raise NotImplementedError
 
-    def assign_and_simplify(self, assignment:Assignment):
+    def assign_and_simplify(self, assignment: Assignment):
         return self.assign(assignment).simplify()
 
-    def evaluate_on_assignment(self, assignment:Assignment) -> bool:
+    def evaluate_on_assignment(self, assignment: Assignment) -> bool:
         return self.assign(assignment).evaluate()
 
     def clauses_with_width(self, j):
         return [c for c in self.clauses if len(c) == j]
 
+
+def true_actually_in(l):
+    return any(el == True and isinstance(el, bool) for el in l)
+
+
 class CNF(NormalForm):
     def __repr__(self):
-        return "CNF:\n"+"\n".join(
+        return "CNF:\n" + "\n".join(
             map(
                 lambda c: " ∨ ".join(
                     map(
@@ -132,15 +137,18 @@ class CNF(NormalForm):
                 self.clauses,
             )
         )
+
     def simplify(self, in_place=False):
         clauses = []
         for c in self.clauses:
-            if True in c:
+            if true_actually_in(c):
                 continue
             new_c = []
             for l in c:
                 if l != False and l not in new_c:
                     new_c.append(l)
+                if -l in new_c:
+                    continue
             clauses.append(new_c)
         if in_place:
             self.clauses = clauses
@@ -156,9 +164,10 @@ class CNF(NormalForm):
             return False
         return None
 
+
 class DNF(NormalForm):
     def __repr__(self):
-        return "CNF:\n"+"\n".join(
+        return "CNF:\n" + "\n".join(
             map(
                 lambda c: " ∨ ".join(
                     map(
@@ -172,7 +181,7 @@ class DNF(NormalForm):
             )
         )
 
-    def simplify(self):
+    def simplify(self, in_place=False):
         clauses = []
         for c in self.clauses:
             if False in c:
@@ -192,16 +201,19 @@ class DNF(NormalForm):
             return True
         return None
 
+
 def all_clauses(n, k):
-    mon_clauses = itertools.combinations(range(1,n+1), k)
+    mon_clauses = itertools.combinations(range(1, n + 1), k)
     negations = list(itertools.product([1, -1], repeat=k))
     for c in mon_clauses:
         for n in negations:
-            yield [x*i for x, i in zip(c, n)]
+            yield [x * i for x, i in zip(c, n)]
+
 
 def all_cnfs(n, k, m):
     for clauses in itertools.combinations(all_clauses(n, k), m):
         yield CNF(clauses)
+
 
 def all_dnfs(n, k, m):
     for clauses in itertools.combinations(all_clauses(n, k), m):
