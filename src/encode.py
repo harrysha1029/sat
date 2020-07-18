@@ -198,12 +198,16 @@ def find_collision(n, k, m, j, num_sample=100):
 
 def counterexample_same_encoding_inconsistent():
     n = 5
-    phi = CNF([[-1, 4], [5], [-4, -2], [-1, 5]])
+    # phi = CNF([[-1, 4], [5], [-4, -2], [-1, 5]])
+    phi = CNF([[5, 2], [-5, 3, 4], [-2, 5, 1], [2, 1]])
     mspas = get_maximally_sensitive_solutions(phi, 2)
-    mspa1 = [False, None, None, False, True] # Inconsistent b/c diverge in the 4th bit
-    mspa2 = [None, False, None, True, True]
+    # mspa1 = [False, None, None, False, True] # Inconsistent b/c diverge in the 4th bit
+    # mspa2 = [None, False, None, True, True]
+    mspa1 = [True, True, None, None, False]
+    mspa2 = [True, None, True, None, True]
     print(ppz_parallel_encode(phi, mspa1, list(range(n))))
     print(ppz_parallel_encode(phi, mspa2, list(range(n))))
-    extra = "\n MSPA1: 0**01, MSPA2: *0*11 both have encoding 0 but are inconsitent with one another"
+    # extra = "\n MSPA1: 0**01, MSPA2: *0*11 both have encoding 0 but are inconsitent with one another"
+    extra = "\n MSPA1: 11**0, MSPA2: 1*1*1 both have encoding 11 but are inconsistent with one another"
 
     draw_assignments(all_solutions(phi), phi, extra)
