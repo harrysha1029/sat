@@ -23,14 +23,15 @@ def all_solutions(phi: NormalForm) -> List[TotalAssignment]:
             sols.append(sig)
     return sols
 
+def complement(subset):
+    n = len(subset[0])
+    assert(all(len(x) == n for x in subset))
+    return [x for x in bitstrings(n) if x not in subset]
+
+
 
 def all_falsifying(phi: NormalForm) -> List[TotalAssignment]:
-    falsifying = []
-    for _sig in bitstrings(phi.n_vars):
-        sig = list(_sig)
-        if not phi.evaluate_on_assignment(sig):
-            falsifying.append(sig)
-    return falsifying
+    return complement(all_solutions(phi))
 
 
 def ppz_once(phi: CNF) -> Optional[TotalAssignment]:

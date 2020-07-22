@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from src.const import Assignment, Clause, PartialAssignment, TotalAssignment
 from src.normal_form import CNF
-from src.utils import all_partial_assignments, bitstrings
+from src.utils import all_partial_assignments, bitstrings, flatten
 
 # Assignments is a list of truth assignments where the ith index contains the i+1s variables truth assignment
 
@@ -115,6 +115,21 @@ def get_free_coords(x):
     free = tuple(sorted([i for i, x in enumerate(x) if x is None]))
     return free
 
+def mod(n: int, mod):
+    return [x for x in bitstrings(n) if (sum(x) % mod) != 0]
+
+
+def block_mod(n: int, k, mod):
+    nk = n // k
+    remainder = n % k
+    assignments = itertools.product(
+        [x for x in bitstrings(k) if sum(x) % mod != 0], repeat=nk
+    )
+    if remainder > 0:
+        assignments = itertools.product(
+            (assignments, [x for x in bitstrings(remainder) if sum(x) % mod != 0])
+        )
+    return [flatten(x) for x in assignments]
 
 
 if __name__ == "__main__":

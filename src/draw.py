@@ -90,7 +90,7 @@ def draw_as_subset(
     assignments: Iterable[TotalAssignment], n: int, phi=None, extra_text="", **kwargs
 ):
     draw_assignments_with_highlights(
-        bitstrings(n), assignments, phi, extra_text, **kwargs
+        list(bitstrings(n)), assignments, phi, extra_text, **kwargs
     )
 
 
@@ -102,23 +102,3 @@ def draw_2n(n: int):
 def draw_parity(n: int):
     strings = [x for x in bitstrings(n) if (sum(x) % 2) == 1]
     draw_assignments(strings)
-
-
-def draw_mod(n: int, mod):
-    strings = [x for x in bitstrings(n) if (sum(x) % mod) != 0]
-    draw_assignments(strings)
-
-
-def draw_block_mod(n: int, k, mod):
-    nk = n // k
-    remainder = n % k
-    assignments = itertools.product(
-        [x for x in bitstrings(k) if sum(x) % mod != 0], repeat=nk
-    )
-    if remainder > 0:
-        assignments = itertools.product(
-            (assignments, [x for x in bitstrings(remainder) if sum(x) % mod != 0])
-        )
-    assignments = [flatten(x) for x in assignments]
-
-    draw_assignments(assignments)

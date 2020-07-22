@@ -5,6 +5,25 @@ from src.draw import draw_solutions, draw_assignments_with_highlights, draw_assi
 from src.encode import ppz_parallel_encode
 from src.sat_algs import all_solutions
 
+def mspas_with_same_free_bits2():
+    # NOTE: This counterexample was kind of hard to find
+    phi = CNF([[1,-2], [1,-2,3], [1, 4], [2, -3, -4]])
+    mspas = get_maximally_sensitive_solutions(phi, 2)
+    print(phi)
+    print("MSPAS")
+    pprint(mspas)
+    free_coords = [get_free_coords(x) for x in mspas]
+    print(free_coords)
+    relevant = [x for (x, i) in zip(mspas, free_coords) if i == (0, 4)]
+    print()
+    print("MSPAs with the same free bits:")
+    print(relevant)
+    print("Encodings:")
+    for x in relevant:
+        print(ppz_parallel_encode(phi, x, range(5)))
+
+    draw_assignments_with_mspas(all_solutions(phi), relevant, phi, fname='mspas_with_same_free_bits.svg')
+
 def mspas_with_same_free_bits():
     # NOTE: This counterexample was kind of hard to find
     phi = CNF([[-1, 2, -3], [1, -2, 4], [-1, -3, 5], [2, -4, -5]])
@@ -14,10 +33,13 @@ def mspas_with_same_free_bits():
     pprint(mspas)
     free_coords = [get_free_coords(x) for x in mspas]
     relevant = [x for (x, i) in zip(mspas, free_coords) if i == (0, 4)]
-
     print()
     print("MSPAs with the same free bits:")
     print(relevant)
+    print("Encodings:")
+    for x in relevant:
+        print(ppz_parallel_encode(phi, x, range(5)))
+
     draw_assignments_with_mspas(all_solutions(phi), relevant, phi, fname='mspas_with_same_free_bits.svg')
 
 
