@@ -1,25 +1,36 @@
 from typing import List, Union
+from pprint import pprint
 
-from src.cnf import *
+import pandas as pd
+from src.assignment import *
 from src.draw import *
+from src.encode import *
 from src.random_sat import *
 from src.sat_algs import *
+from src.short_dnf import *
 from src.utils import *
+from src.counter_examples import *
 
-phi = dist_R(6, 3, 5)
-solns = all_solutions(phi)
-draw_assignments(solns, phi)
+from tqdm import tqdm
 
-ap = all_partial_assignments(5, 2)
-print(ap)
-for hi in ap:
-    print(hi)
+mspas_with_same_free_bits2()
 
-# draw_parity(5)
+# n, k, j, m = 4, 3, 1, 10
 
-# assignment = ppz(phi, 1000)
+# for _ in tqdm(range(100000)):
+#     phi = dist_R(n, k, m)
+#     mspas = get_maximally_sensitive_solutions(phi, j)
+#     free_coords = [get_free_coords(x) for x in mspas]
+#     if len(set(free_coords)) < len(free_coords):
+#         print(phi.clauses)
+#         print(free_coords)
+#         # relevant = [x for (x, i) in zip(mspas, free_coords) if i == (0, 4)]
+#         print("HI found counterexample")
+#         exit()
 
-# if assignment:
-#     print_formula_with_assignment(phi, assignment)
-#     print(sensitivity(phi, assignment))
-#     print(avg_sensitivity(phi))
+# draw_assignments(block_mod(6, 3, 3))
+# draw_assignments(complement(block_mod(4, 2, 2)))
+
+# draw_as_subset(block_mod(6, 3, 3), 6)
+# phi = CNF([[-1, 2, -3], [1, -2, 4], [-1, -3, 5], [2, -4, -5]])
+# draw_falsifying(phi, fname="falsifying.svg")
