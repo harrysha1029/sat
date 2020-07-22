@@ -24,6 +24,15 @@ def all_solutions(phi: NormalForm) -> List[TotalAssignment]:
     return sols
 
 
+def all_falsifying(phi: NormalForm) -> List[TotalAssignment]:
+    falsifying = []
+    for _sig in bitstrings(phi.n_vars):
+        sig = list(_sig)
+        if not phi.evaluate_on_assignment(sig):
+            falsifying.append(sig)
+    return falsifying
+
+
 def ppz_once(phi: CNF) -> Optional[TotalAssignment]:
     n = phi.n_vars
     assignment: PartialAssignment = [None for _ in range(n)]

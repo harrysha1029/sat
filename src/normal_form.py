@@ -55,6 +55,16 @@ class NormalForm:
     def literals(self):
         return set([literal for clause in self.clauses for literal in clause])
 
+    def assign_on_variables(self, assignment: Assignment, vars: List[int]):
+        for _var, val in enumerate(assignment):
+            var = _var + 1
+            if val is None:
+                continue
+            # assert isinstance(val, bool)
+            if var in vars:
+                self = self.assign_single_variable(var, val)
+        return self
+
     def assign(self, assignment: Assignment):
         for var, val in enumerate(assignment):
             if val is None:

@@ -3,9 +3,9 @@ import itertools
 import math
 import os
 
-import pandas as pd
 from tqdm import tqdm
 
+import pandas as pd
 from src.assignment import get_maximally_sensitive_solutions
 from src.draw import draw_as_subset
 from src.normal_form import CNF, all_cnfs
@@ -13,7 +13,7 @@ from src.random_sat import dist_R, sample
 from src.sat_algs import all_solutions
 
 
-def load_stats(fname) -> pd.DataFrame:
+def load_stats() -> pd.DataFrame:
     cols = ["n", "m", "k", "n_max_sens"]
     df = pd.read_csv("cnfs_n5_k3_m4_nfree2.csv", header=None, index_col=0)
     df.columns = cols

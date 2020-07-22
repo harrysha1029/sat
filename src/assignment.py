@@ -1,7 +1,7 @@
 import copy
+import itertools
 from statistics import mean
 from typing import List, Optional
-import itertools
 
 from src.const import Assignment, Clause, PartialAssignment, TotalAssignment
 from src.normal_form import CNF
@@ -92,26 +92,28 @@ def get_all_partial_sols(phi, num_free):
     return partial_sols
 
 
-def get_maximally_sensitive_assignments(phi, num_free):
-    partial_assignments = all_partial_assignments(phi.n_vars, num_free)
-    return [x for x in partial_assignments if maximally_sensitive(phi, x)]
-
-
 def get_maximally_sensitive_solutions(phi, num_free):
     sols = get_all_partial_sols(phi, num_free)
     return [x for x in sols if maximally_sensitive(phi, x)]
 
-def consistent(x:Assignment, y:Assignment):
+
+def consistent(x: Assignment, y: Assignment):
     assert len(x) == len(y)
     for a, b in zip(x, y):
         if a is not None and b is not None and a != b:
             return False
     return True
 
+
 def pairwize_consistent(l):
-    for x,y in itertools.combinations(l, 2):
-        if not consistent(x, y): return False
+    for x, y in itertools.combinations(l, 2):
+        if not consistent(x, y):
+            return False
     return True
+
+def get_free_coords(x):
+    free = tuple(sorted([i for i, x in enumerate(x) if x is None]))
+    return free
 
 
 

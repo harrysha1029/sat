@@ -10,17 +10,35 @@ def sample(
 ) -> Iterable[CNF]:
     for _ in range(num_sample):
         m = random.randrange(1, n + 1)
-        yield dist(n, k, m)
+        while True:
+            phi = dist(n, k, m)
+            if phi.n_vars == n:
+                yield phi
+                break
 
 
 def sample_fix_num_clauses(
     num_sample, dist: Callable[[int, int, int], CNF], n: int, k: int, m: int
 ) -> Iterable[CNF]:
-    return (dist(n, k, m) for _ in range(num_sample))
+    for _ in range(num_sample):
+        while True:
+            phi = dist(n, k, m)
+            if phi.n_vars == n:
+                yield phi
+                break
 
 
 def sample_clause(n: int, k: int) -> Clause:
-    return [random.randint(1, n) * random.choice([1, -1]) for _ in range(k)]
+    while True:
+        clauses = [random.randint(1, n) * random.choice([1, -1]) for _ in range(k)]
+        variables = [abs(l) for l in clauses]
+        if (
+            True not in [i and -i in clauses for i in range(n)]
+            and len(set(variables)) > 1
+        ):
+            break
+
+    return clauses
 
 
 def dist_R(n: int, k: int, m: int) -> CNF:
