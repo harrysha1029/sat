@@ -8,7 +8,6 @@ from src.utils import all_partial_assignments, bitstrings, lit_to_var
 
 # Assignments is a list of truth assignments where the ith index contains the i+1s variables truth assignment
 
-
 class NormalForm:
     def __init__(self, clauses: Optional[List[Clause]] = None):
         if clauses is None:
@@ -30,6 +29,20 @@ class NormalForm:
                 self.clauses,
             )
         )
+
+    def rename(self, d):
+        def rename_literal(lit):
+            var = abs(lit)
+            sign = -1 if lit < 1 else 1
+            if var in d:
+                return sign*d[var]
+            return lit
+
+        new_clauses = [ ]
+        for c in self.clauses:
+            new_clauses.append([rename_literal(l) for l in c])
+        self.clauses = new_clauses 
+        return self
 
     def sorted(self):
         clauses = sorted([sorted(c) for c in self.clauses])

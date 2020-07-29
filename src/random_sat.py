@@ -1,5 +1,6 @@
 import random
 from typing import Callable, Iterable, List
+import math
 
 from src.const import Assignment, Clause
 from src.normal_form import CNF, all_cnfs, all_dnfs
@@ -9,13 +10,23 @@ def sample(
     num_sample, dist: Callable[[int, int, int], CNF], n: int, k: int
 ) -> Iterable[CNF]:
     for _ in range(num_sample):
-        m = random.randrange(1, n + 1)
+        m = random.randrange(1, (n**k)*(2**k))
         while True:
             phi = dist(n, k, m)
             if phi.n_vars == n:
                 yield phi
                 break
 
+def sample_m_range(
+    num_sample, dist: Callable[[int, int, int], CNF], n: int, k: int, m_start, m_end
+) -> Iterable[CNF]:
+    for _ in range(num_sample):
+        m = random.randrange(m_start, m_end)
+        while True:
+            phi = dist(n, k, m)
+            if phi.n_vars == n:
+                yield phi
+                break
 
 def sample_fix_num_clauses(
     num_sample, dist: Callable[[int, int, int], CNF], n: int, k: int, m: int
