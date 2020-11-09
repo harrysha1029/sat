@@ -39,21 +39,32 @@ def sample_fix_num_clauses(
                 break
 
 
+
+def sample_monotone_clause(n: int, k: int) -> Clause:
+    multiplier = 1
+    # multiplier = random.choice([1, -1])
+    return [multiplier*random.randint(1, n) for _ in range(k)]
+
 def sample_clause(n: int, k: int) -> Clause:
-    while True:
-        clauses = [random.randint(1, n) * random.choice([1, -1]) for _ in range(k)]
-        variables = [abs(l) for l in clauses]
-        if (
-            True not in [i and -i in clauses for i in range(n)]
-            and len(set(variables)) > 1
-        ):
-            break
+    # while True:
+    #     clauses = [random.randint(1, n) * random.choice([1, -1]) for _ in range(k)]
+    #     variables = [abs(l) for l in clauses]
+    #     if (
+    #         True not in [i and -i in clauses for i in range(n)]
+    #         and len(set(variables)) > 1
+    #     ):
+    #         break
+    clauses = [random.randint(1, n) * random.choice([1, -1]) for _ in range(k)]
 
     return clauses
 
 
 def dist_R(n: int, k: int, m: int) -> CNF:
     clauses = [sample_clause(n, k) for _ in range(m)]
+    return CNF(clauses)
+
+def dist_monotone(n: int, k: int, m: int) -> CNF:
+    clauses = [sample_monotone_clause(n, k) for _ in range(m)]
     return CNF(clauses)
 
 

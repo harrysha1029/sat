@@ -30,7 +30,11 @@ class NormalForm:
             )
         )
 
-    def rename(self, d):
+    def rename_perm(self, pi, inplace=False):
+        d = {i+1:j+1 for i, j in enumerate(pi)}
+        return self.rename(d, inplace)
+
+    def rename(self, d, in_place=False):
         def rename_literal(lit):
             var = abs(lit)
             sign = -1 if lit < 1 else 1
@@ -41,8 +45,12 @@ class NormalForm:
         new_clauses = [ ]
         for c in self.clauses:
             new_clauses.append([rename_literal(l) for l in c])
-        self.clauses = new_clauses 
-        return self
+        if in_place:
+            self.clauses = new_clauses 
+            return self
+        else: 
+            return CNF(new_clauses)
+
 
     def sorted(self):
         clauses = sorted([sorted(c) for c in self.clauses])

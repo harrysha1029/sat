@@ -92,7 +92,7 @@ def get_all_partial_sols(phi, num_free):
     return partial_sols
 
 
-def get_maximally_sensitive_solutions(phi, num_free):
+def get_prime_implicants(phi, num_free):
     sols = get_all_partial_sols(phi, num_free)
     return [x for x in sols if maximally_sensitive(phi, x)]
 

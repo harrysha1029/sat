@@ -6,7 +6,7 @@ import os
 from tqdm import tqdm
 
 import pandas as pd
-from src.assignment import get_maximally_sensitive_solutions
+from src.assignment import get_prime_implicants
 from src.draw import draw_as_subset
 from src.normal_form import CNF, all_cnfs
 from src.random_sat import dist_R, sample
@@ -61,7 +61,7 @@ def generate_short_dnf_stats(n, k, m, nfree):
     fname = f"cnfs_n{n}_k{k}_m{m}_nfree{nfree}.csv"
     for i, phi in tqdm(enumerate(all_cnfs(n, k, m)), total=num_nfs(n, k, m)):
         with open(fname, "a") as f:
-            max_sens = get_maximally_sensitive_solutions(phi, nfree)
+            max_sens = get_prime_implicants(phi, nfree)
             num_max_sens = len(max_sens)
             f.write(", ".join(map(str, [i, n, k, m, num_max_sens])))
             f.write("\n")
@@ -75,7 +75,7 @@ def compare_num_free_bits_stats(n, k, num_sample=100):
             m = len(phi.clauses)
             sols = all_solutions(phi)
             for j in range(0, n):
-                max_sens = get_maximally_sensitive_solutions(phi, j)
+                max_sens = get_prime_implicants(phi, j)
                 num_max_sens = len(max_sens)
                 f.write(", ".join(map(str, [phi.clauses, n, k, m, j, num_max_sens])))
                 f.write("\n")
@@ -133,7 +133,7 @@ def short_dnf():
     for i, phi in tqdm(all_cnfs(n, k, m)):
         # find maximally sensitive partial encoding x
         solns = all_solutions(phi)
-        max_sens = get_maximally_sensitive_solutions(phi, num_free_bits)
+        max_sens = get_prime_implicants(phi, num_free_bits)
         # draw_assignments(solns, phi)
         if len(max_sens) > bound + 1:
             draw_assignments(

@@ -11,7 +11,8 @@ from collections import Counter
 def num_mspas_mod_3():
     for i in range(2, 10):
         phi = mod_formula(i, 3)
-        mspas = get_maximally_sensitive_solutions(phi, 1)
+        draw_solutions(phi, fname=f'figs/mod3_n{i}.svg')
+        mspas = get_prime_implicants(phi, 1)
         num_mspas = len(mspas)
         print(f"{i=}, {num_mspas=}")
 
@@ -23,7 +24,7 @@ def search_for_something_worse_than_block_mod_three_for_n_over_k():
     phis = sample_m_range(100000, dist_R, n, k, 15, 30)
     running_average = (None, 0)
     for phi in phis:
-        mspas = get_maximally_sensitive_solutions(phi, n/k)
+        mspas = get_prime_implicants(phi, n/k)
         encs = [tuple(ppz_parallel_encode(phi, x, list(range(n)))) for x in mspas]
         c = Counter(encs)
         if len(encs) > 6**3:
@@ -50,8 +51,9 @@ def number_of_mspas_and_collisions_for_block_mod_3():
     mod = 3
     phi = block_mod_formula(n, k, mod)
     draw_solutions(phi)
-    mspas = get_maximally_sensitive_solutions(phi, n/k)
+    mspas = get_prime_implicants(phi, n/k)
     encs = [tuple(ppz_parallel_encode(phi, x, range(n))) for x in mspas]
+    print(mspas)
     print(len(encs))
     print(Counter(encs))
 
@@ -62,7 +64,7 @@ def mspas_with_same_free_bits2():
     # 4 sols
     phi = CNF([[-1, 2, -3, 4], [1, -2, 4, 3], [-1, -3, 5, -2, -4], [3, 2, -4, -5]])
 
-    mspas = get_maximally_sensitive_solutions(phi, 2)
+    mspas = get_prime_implicants(phi, 2)
     print(phi)
     print("MSPAS")
     pprint(mspas)
@@ -82,7 +84,7 @@ def mspas_with_same_free_bits2():
 def mspas_with_same_free_bits():
     # NOTE: This counterexample was kind of hard to find
     phi = CNF([[-1, 2, -3], [1, -2, 4], [-1, -3, 5], [2, -4, -5]])
-    mspas = get_maximally_sensitive_solutions(phi, 2)
+    mspas = get_prime_implicants(phi, 2)
     print(phi)
     print("MSPAS")
     pprint(mspas)
@@ -102,7 +104,7 @@ def counterexample_same_encoding_inconsistent():
     n = 5
     # phi = CNF([[-1, 4], [5], [-4, -2], [-1, 5]])
     phi = CNF([[5, 2], [-5, 3, 4], [-2, 5, 1], [2, 1]])
-    mspas = get_maximally_sensitive_solutions(phi, 2)
+    mspas = get_prime_implicants(phi, 2)
     # mspa1 = [False, None, None, False, True] # Inconsistent b/c diverge in the 4th bit
     # mspa2 = [None, False, None, True, True]
     mspa1 = [True, True, None, None, False]

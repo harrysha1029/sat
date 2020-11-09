@@ -56,7 +56,7 @@ def draw_assignments_with_highlights(
     G = make_graph(assignments, phi, extra_text)
     for x in highlights:
         G.nodes[list_of_bool_to_binary_string(x)]["style"] = "filled"
-        G.nodes[list_of_bool_to_binary_string(x)]["fillcolor"] = "red"
+        G.nodes[list_of_bool_to_binary_string(x)]["fillcolor"] = "green"
     draw_graph(G, **kwargs)
 
 
@@ -92,6 +92,9 @@ def draw_as_subset(
     draw_assignments_with_highlights(
         list(bitstrings(n)), assignments, phi, extra_text, **kwargs
     )
+
+def draw_formula_as_subset(phi, extra_text="", **kwargs):
+    draw_as_subset(all_solutions(phi), phi.n_vars, phi, extra_text, **kwargs)
 
 
 def draw_2n(n: int):

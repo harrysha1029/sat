@@ -1,0 +1,7 @@
+mypy
+pylint
+tqdm
+networkx
+pygraphviz
+pandas
+numpy

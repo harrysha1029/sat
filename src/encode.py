@@ -6,7 +6,7 @@ from typing import List
 
 from src.assignment import (
     completions,
-    get_maximally_sensitive_solutions,
+    get_prime_implicants,
     maximally_sensitive,
     pairwize_consistent,
 )
@@ -26,11 +26,17 @@ def random_permutation(n: int) -> Permutation:
     return sig
 
 
-def ppz_encode(phi: CNF, x: TotalAssignment, sig: Permutation) -> TotalAssignment:
-    pass
+def encode_3(phi: CNF, x: Assignment, pi: Permutation):
+    enc = []
+    x = [x[i] for i in pi]
+    phi = phi.rename_perm(pi)
+    n = phi.n_vars
+    for i in range(n):
+        pass
+        # TODO
 
 
-def ppz_decode(encoding: TotalAssignment, sig: Permutation) -> TotalAssignment:
+def decode_3(encoding: Assignment, pi: Permutation) -> TotalAssignment:
     pass
 
 
@@ -203,7 +209,7 @@ def find_collision(n, k, m, j, num_sample=100, fill_first=False):
         print(phi.clauses)
         sols = all_solutions(phi)
         draw_assignments(sols, phi)
-        mspas = get_maximally_sensitive_solutions(phi, j)
+        mspas = get_prime_implicants(phi, j)
         enc2assign = defaultdict(list)
         for mspa in mspas:
             print(mspa)

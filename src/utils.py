@@ -1,10 +1,14 @@
 import itertools
 import logging
 import sys
+import math
+
 from typing import Iterable, List
 
 from src.const import LOG_FILE, LOG_FORMATTER, PartialAssignment, TotalAssignment
 
+def entropy_function(p):
+    return -p*math.log2(p) - (1-p)*math.log2(1-p)
 
 def lit_to_var(x):
     return abs(x)
